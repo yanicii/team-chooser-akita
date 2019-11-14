@@ -1,0 +1,18 @@
+{
+  "npmScope": "team-chooser",
+  "implicitDependencies": {
+    "angular.json": "*",
+    "package.json": "*",
+    "tsconfig.json": "*",
+    "tslint.json": "*",
+    "nx.json": "*"
+  },
+  "projects": {
+    "team-chooser-e2e": {
+      "tags": []
+    },
+    "team-chooser": {
+      "tags": []
+    }
+  }
+}
