@@ -1,0 +1,35 @@
+@import "../../../styles";
+
+:host {
+  padding: 10px;
+  height: calc(100% - 48px);;
+}
+
+.choose-teams__available-players-container {
+  height: 100%;
+  overflow-y: scroll;
+  background-color: lightgrey;
+  margin-right: 10px;
+}
+
+.choose-teams__toolbar {
+  margin-bottom: 10px;
+  height: 80px;
+  background-color: lightgrey;
+}
+
+.choose-teams__all-teams-container {
+  height: 100%;
+}
+
+.choose-teams__team-container {
+  overflow-y: scroll;
+}
+
+.choose-teams__team-container-active {
+  background-color: $primary;
+
+  mat-card-title {
+    color: white;
+  }
+}

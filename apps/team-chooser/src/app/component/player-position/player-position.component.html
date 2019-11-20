@@ -1,0 +1,10 @@
+<mat-form-field>
+  <mat-label>Position</mat-label>
+  <mat-select [value]="position" (selectionChange)="positionChanged.emit($event.value)">
+    <mat-option value="Unknown">Unknown</mat-option>
+    <mat-option value="Goalkeeper">Goalkeeper</mat-option>
+    <mat-option value="Defender">Defender</mat-option>
+    <mat-option value="Midfielder">Midfielder</mat-option>
+    <mat-option value="Forward">Forward</mat-option>
+  </mat-select>
+</mat-form-field>

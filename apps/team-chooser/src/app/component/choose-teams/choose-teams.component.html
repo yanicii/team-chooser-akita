@@ -1,0 +1,47 @@
+<mat-card class="choose-teams__available-players-container" fxLayout="column" fxFlex="20">
+  <mat-card-header>
+    <mat-card-title>Available Players</mat-card-title>
+  </mat-card-header>
+  <player-card *ngFor="let player of availablePlayers$ | async" [player]="player" (click)="choosePlayer(player.id)"></player-card>
+</mat-card>
+<div fxLayout="column" fxFlex="80">
+  <mat-toolbar class="choose-teams__toolbar" fxLayoutGap="10px" fxLayout="row" fxLayoutAlign="start center">
+    <ng-container *ngIf="!(activeTeam$ | async) else teamChips">
+      <button [disabled]="(teamsCount$ | async) >= maxTeamCount" (click)="addTeam()" mat-raised-button color="primary">
+        <mat-icon>add</mat-icon>
+        Add team
+      </button>
+      <button [disabled]="(teamsCount$ | async) < 1" (click)="removeTeam()" mat-raised-button color="primary">
+        <mat-icon>remove</mat-icon>
+        Remove team
+      </button>
+      <button [disabled]="(teamsCount$ | async) < 2" (click)="startChoosing()" mat-raised-button color="primary">
+        <mat-icon>person_add</mat-icon>
+        Start Choosing Teams
+      </button>
+      <h4 *ngIf="(teamsCount$ | async) >= maxTeamCount">There is a maximum of {{maxTeamCount}} teams</h4>
+    </ng-container>
+    <ng-template #teamChips>
+      <mat-chip-list>
+        <mat-chip *ngFor="let team of teams$ | async" [color]="isTeamActive(team.id) ? 'primary': 'default'" [selected]="isTeamActive(team.id)">
+          {{team.name}}
+        </mat-chip>
+      </mat-chip-list>
+      <h4>{{(activeTeam$ | async).name}} has to choose a player</h4>
+      <button mat-raised-button color="primary" (click)="resetTeams()">
+        <mat-icon>undo</mat-icon>
+        Reset Teams
+      </button>
+    </ng-template>
+  </mat-toolbar>
+  <div fxLayout="row" class="choose-teams__all-teams-container" fxLayoutGap="10px">
+    <mat-card *ngFor="let team of teams$ | async" class="choose-teams__team-container"
+              [class.choose-teams__team-container-active]="isTeamActive(team.id)"
+              fxLayout="column" fxFlex="25" style="height: 100%">
+      <mat-card-header>
+        <mat-card-title>{{team.name}}</mat-card-title>
+      </mat-card-header>
+      <player-card *ngFor="let player of team.players" [player]="player"></player-card>
+    </mat-card>
+  </div>
+</div>

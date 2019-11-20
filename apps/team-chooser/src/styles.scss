@@ -1,1 +1,23 @@
 /* You can add global styles to this file, and also import other style files */
+@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons");
+// Import material theming functions
+@import '~@angular/material/theming';
+
+$app-primary: mat-palette($mat-deep-purple);
+$primary: mat-color($app-primary);
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+button {
+  height: 59.5px;
+}
+
+.mat-form-field-wrapper {
+  margin-bottom: -20px;
+}

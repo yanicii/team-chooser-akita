@@ -1,0 +1,27 @@
+<div fxLayout="row" fxLayoutAlign="center" fxLayoutGap="10px">
+  <form [formGroup]="playerForm" fxFlex.gt-md="30" fxFlex.lt-md="60" (keydown.enter)="addPlayer()">
+    <mat-form-field class="manage-players__name-input" appearance="fill" fxFlex="100">
+      <mat-label>Name</mat-label>
+      <input formControlName="name" matInput>
+    </mat-form-field>
+  </form>
+  <button mat-raised-button color="primary" fxFlex.gt-md="20" fxFlex.lt-md="40" (click)="addPlayer()">
+    <mat-icon>add</mat-icon>
+    Add Player
+  </button>
+</div>
+<div *ngFor="let player of allPlayers$ | async" class="manage-players__player-card" fxLayout="row"
+     fxLayoutAlign="center">
+  <mat-card fxFlex.gt-md="50" fxFlex.lt-md="100" fxLayout.gt-md="row" fxLayout.lt-md="column"
+            fxLayoutAlign="space-between center">
+    <h2>{{player.name}}</h2>
+    <div fxLayout="row" style="align-items: center;">
+      <player-position [position]="player.position"
+                       (positionChanged)="updatePlayerPosition(player.id, $event)"></player-position>
+      <player-rating [rating]="player.rating" [editable]="true" (ratingChanged)="updatePlayerRating(player.id, $event)"></player-rating>
+      <button mat-icon-button (click)="removePlayer(player.id)" [disabled]="(activeTeam$ | async)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
+  </mat-card>
+</div>
