@@ -10,4 +10,5 @@ export class PlayersQuery extends QueryEntity<PlayersState> {
   constructor(protected store: PlayersStore) {
     super(store);
   }
+
 }
