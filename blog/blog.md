@@ -82,6 +82,10 @@ export class PlayersService {
     this.store.update(id, {rating})
   }
 
+  updatePosition(id: string, position: string): void {
+    this.store.update(id, {position})
+  }
+
 }
 ```
 
