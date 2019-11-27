@@ -1,0 +1,3 @@
+<mat-icon *ngFor="let number of loopNumbers; let i = index" (click)="iconClicked(i)" [style.cursor]="editable ? 'pointer' : 'default'">
+  {{i < rating ? 'star' : 'star_border'}}
+</mat-icon>

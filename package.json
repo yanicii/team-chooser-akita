@@ -6,6 +6,7 @@
     "ng": "ng",
     "nx": "nx",
     "start": "ng serve",
+    "start:player-manager": "ng serve --project=player-manager",
     "build": "ng build",
     "test": "ng test",
     "lint": "nx workspace-lint && ng lint",

@@ -123,6 +123,129 @@
           }
         }
       }
+    },
+    "player-manager": {
+      "projectType": "application",
+      "schematics": {
+        "@nrwl/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "apps/player-manager",
+      "sourceRoot": "apps/player-manager/src",
+      "prefix": "team-chooser",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/apps/player-manager",
+            "index": "apps/player-manager/src/index.html",
+            "main": "apps/player-manager/src/main.ts",
+            "polyfills": "apps/player-manager/src/polyfills.ts",
+            "tsConfig": "apps/player-manager/tsconfig.app.json",
+            "aot": false,
+            "assets": [
+              "apps/player-manager/src/favicon.ico",
+              "apps/player-manager/src/assets"
+            ],
+            "styles": ["apps/player-manager/src/styles.scss"],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/player-manager/src/environments/environment.ts",
+                  "with": "apps/player-manager/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "player-manager:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "player-manager:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "player-manager:build"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "apps/player-manager/tsconfig.app.json",
+              "apps/player-manager/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/player-manager/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/player-manager/jest.config.js",
+            "tsConfig": "apps/player-manager/tsconfig.spec.json",
+            "setupFile": "apps/player-manager/src/test-setup.ts"
+          }
+        }
+      }
+    },
+    "player-manager-e2e": {
+      "root": "apps/player-manager-e2e",
+      "sourceRoot": "apps/player-manager-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/player-manager-e2e/cypress.json",
+            "tsConfig": "apps/player-manager-e2e/tsconfig.e2e.json",
+            "devServerTarget": "player-manager:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "player-manager:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": ["apps/player-manager-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/player-manager-e2e/**"]
+          }
+        }
+      }
     }
   },
   "cli": {

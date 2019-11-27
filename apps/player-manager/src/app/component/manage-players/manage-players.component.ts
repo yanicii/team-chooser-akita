@@ -4,8 +4,6 @@ import {createPlayer, Player} from '../../model/player.model';
 import {PlayersQuery} from '../../state/players.query';
 import {PlayersService} from '../../state/players.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {Team} from '../../model/team.model';
-import {TeamsQuery} from '../../state/teams.query';
 
 @Component({
   selector: 'manage-players',
@@ -17,21 +15,18 @@ export class ManagePlayersComponent {
   playerForm: FormGroup;
 
   allPlayers$: Observable<Player[]>;
-  activeTeam$: Observable<Team>;
 
   constructor(private playersQuery: PlayersQuery,
-              private teamsQuery: TeamsQuery,
               private playersService: PlayersService,
               private formBuilder: FormBuilder) {
     this.initFormGroup();
     this.allPlayers$ = this.playersQuery.selectAll();
-    this.activeTeam$ = this.teamsQuery.selectActive() as Observable<Team>;
   }
 
   addPlayer(): void {
     const name = this.playerForm.value.name;
     if (name) {
-      this.playersService.add([createPlayer(name, 0, 'Unknown')])
+      this.playersService.add([createPlayer(name, 0, 'Unknown')]);
       this.playerForm.reset();
     }
   }

@@ -13,6 +13,12 @@
     },
     "team-chooser": {
       "tags": []
+    },
+    "player-manager-e2e": {
+      "tags": []
+    },
+    "player-manager": {
+      "tags": []
     }
   }
 }

@@ -19,7 +19,7 @@
       <player-position [position]="player.position"
                        (positionChanged)="updatePlayerPosition(player.id, $event)"></player-position>
       <player-rating [rating]="player.rating" [editable]="true" (ratingChanged)="updatePlayerRating(player.id, $event)"></player-rating>
-      <button mat-icon-button (click)="removePlayer(player.id)" [disabled]="(activeTeam$ | async)">
+      <button mat-icon-button (click)="removePlayer(player.id)">
         <mat-icon>delete</mat-icon>
       </button>
     </div>
