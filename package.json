@@ -7,6 +7,7 @@
     "nx": "nx",
     "start": "ng serve",
     "start:player-manager": "ng serve --project=player-manager",
+    "start:team-chooser": "ng serve --project=team-chooser",
     "build": "ng build",
     "test": "ng test",
     "lint": "nx workspace-lint && ng lint",

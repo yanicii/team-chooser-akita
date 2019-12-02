@@ -50,7 +50,7 @@ export class ManagePlayersComponent {
 
   private initFormGroup(): void {
     this.playerForm = this.formBuilder.group({
-      name: ['', Validators.required]
+      name: ['']
     })
   }
 

@@ -1,6 +1,33 @@
+import { Injectable } from '@angular/core';
+import {Observable, of} from 'rxjs';
 import {Player} from '../model/player.model';
 
-export const INITIAL_PLAYERS: Player[] = [
+@Injectable({
+  providedIn: 'root'
+})
+export class PlayersHttpService {
+
+  constructor() { }
+
+  getAll(): Observable<Player[]> {
+    return of(INITIAL_PLAYERS);
+  }
+
+  add(player: Player[]): Observable<Player[]> {
+    return of(player);
+  }
+
+  update(id: string, rating: number): Observable<number> {
+    return of(rating);
+  }
+
+  remove(id: string): Observable<void> {
+    return of(null);
+  }
+
+}
+
+const INITIAL_PLAYERS = [
   {
     "id": "cbbfcc6f-ca92-49b1-a004-190b6d159029",
     "name": "Michele Shelton",

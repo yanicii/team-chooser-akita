@@ -26,7 +26,7 @@ export class ManagePlayersComponent {
   addPlayer(): void {
     const name = this.playerForm.value.name;
     if (name) {
-      this.playersService.add([createPlayer(name, 0, 'Unknown')]);
+      this.playersService.add([createPlayer(name, 0)]);
       this.playerForm.reset();
     }
   }
@@ -35,17 +35,13 @@ export class ManagePlayersComponent {
     this.playersService.updateRating(playerId, rating);
   }
 
-  updatePlayerPosition(playerId: string, position: string): void {
-    this.playersService.updatePosition(playerId, position);
-  }
-
   removePlayer(playerId: string): void {
     this.playersService.remove(playerId);
   }
 
   private initFormGroup(): void {
     this.playerForm = this.formBuilder.group({
-      name: ['', Validators.required]
+      name: ['']
     })
   }
 

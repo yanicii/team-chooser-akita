@@ -5,7 +5,7 @@
       <input formControlName="name" matInput>
     </mat-form-field>
   </form>
-  <button mat-raised-button color="primary" fxFlex.gt-md="20" fxFlex.lt-md="40" (click)="addPlayer()" [disabled]="!playerForm.valid">
+  <button mat-raised-button color="primary" fxFlex.gt-md="20" fxFlex.lt-md="40" (click)="addPlayer()" [disabled]="!playerForm.value.name">
     <mat-icon>add</mat-icon>
     Add Player
   </button>
@@ -16,8 +16,6 @@
             fxLayoutAlign="space-between center">
     <h2>{{player.name}}</h2>
     <div fxLayout="row" style="align-items: center;">
-      <player-position [position]="player.position"
-                       (positionChanged)="updatePlayerPosition(player.id, $event)"></player-position>
       <player-rating [rating]="player.rating" [editable]="true" (ratingChanged)="updatePlayerRating(player.id, $event)"></player-rating>
       <button mat-icon-button (click)="removePlayer(player.id)">
         <mat-icon>delete</mat-icon>
