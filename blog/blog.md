@@ -2,14 +2,17 @@
 
 ## Motivation
 
-Moderne Webapplikationen haben häufig die Aufgabe, Domain-Informationen unterschiedlicher Herkunft zur Verfügung zu stellen. Zum Funktionsumfang solcher 
-Anwendungen gehört neben der Anzeige auch die Aktualisierung, Erweiterung und Löschung bestimmter Informationen. Um diese Funktionen zu ermöglichen, müssen dafür
-Daten im Client vorgehalten werden. Die Gesamtheit der verwalteten Informationen kann als "State" der Applikation bezeichnet werden. Abhängig von der Anwendung 
-muss diese auch den Zustand der UI verwalten, sodass zusätzlich Informationen wie "Ist die Sidebar aufgeklappt?" im Client gespeichert werden.   
+Webapplikationen haben häufig die Aufgabe, Informationen aus unterschiedlichen Quellen zur Verfügung zu stellen. Zum Funktionsumfang solcher Anwendungen gehört 
+neben der Anzeige auch oft die Aktualisierung, Erweiterung und Löschung bestimmter Informationen. Um diese Funktionen zu ermöglichen, müssen dafür irgendwie Daten im 
+Client vorgehalten werden. Die Gesamtheit der verwalteten Informationen beinflusst die Anzeige und das Verhalten der Applikation und kann als Zustand oder State
+bezeichnet werden. Abhängig von der Anwendung muss auch der Zustand der UI verwaltet werden, sodass zusätzlich Informationen wie "Ist die Sidebar aufgeklappt?" im 
+Client "gespeichert" werden.
 
 Eine Herausforderung bei der Darstellung von Informationen in Webapplikationen ist, dass die Requests häufig zu verschiedenen Quellen geschickt werden und die 
-Responses somit zu beliebigen Zeitpunkten zurückkommen. Nur mit einem gut strukturierten State und dem dazugehörigen Datenfluss kann gewährleistet werden,
-dass die einzelnen Bestandteile des Clients zur richtigen Zeit dargestellt und aktualisiert werden. 
+Responses somit zu beliebigen Zeitpunkten zurückkommen. Es ist wichtig die einzelnen Komponenten des Clients zur richtigen Zeit mit neuen Daten zu aktualisieren
+und neu zu rendern, allerdings erfordert das auch einen gut strukturierten Datenfluss. Darüber hinaus hat man häufig die Aufgabe, ein und die selbe Information an
+an verschiedenen Stellen einer Anwendung darzustellen. Auch hierbei muss man sich gut überlegen, wie man die Daten über die Applikation hinweg verteilt, ohne dabei
+den Überblick zu verlieren oder die gleichen Daten mehrfach abzulegen.
 
 Wenn man sich solchen Problemstellungen gegenübersteht und den State seiner Anwendung ordentlich verwalten möchte, kommt man um "State Management" Frameworks
 kaum herum. In diesem Beitrag wird die Funktionsweise eines solchen Frameworks am Beispiel von Akita erklärt. Akita ist im Angular Umfeld entstanden und basiert
@@ -51,10 +54,6 @@ mit der Entitäten vom Typ "Player" erzeugt, verändert und gelöscht werden kö
 
 ### Model
 
-Das zentrale Model der Anwendung ist denkbar einfach gehalten. Die Attribute "name" und "rating" beschreiben den verwalteten Spieler, das Attribut "id" dient der 
-Identifiezierung. Um die Vorzüge von Akita voll nutzen zu können, ist es wichtig, dass das Model eine eindeutige ID besitzt. Der Typ "ID" wird von Akita selbst
-bereitgestellt.
- 
 ```typescript
 export interface Player {
   id: ID;
@@ -63,24 +62,38 @@ export interface Player {
 }
 ```
 
+Das zentrale Model der Anwendung ist einfach gehalten. Die Attribute "name" und "rating" beschreiben den verwalteten Spieler, das Attribut "id" dient der 
+Identifizierung. Um die Vorzüge von Akita voll nutzen zu können, ist es wichtig, dass das Model eine eindeutige ID besitzt. Der Typ "ID" wird von Akita selbst
+bereitgestellt.
+
 ### Store
 
-Um Informationen zu verschiedenen Spielern zu verwalten, implementieren wir einen EntityStore. 
-
 ```typescript
-export interface PlayersState extends EntityState<Player> {}
-
 @StoreConfig({
   name: 'players'
 })
 export class PlayersStore extends EntityStore<PlayersState, Player> {
-
   constructor() {
     super(initialState);
   }
-
 }
 ```
+Um Informationen zu verschiedenen Spielern zu verwalten, implementieren wir einen Store. Hierzu erweitern wird die von Akita bereitgestellte EntityStore-Klasse. 
+Vereinfacht kann man sich einen solchen EntityStore als Datenbanktabelle vorstellen. Im Vergleich zur der normalen Store-Klasse von Akita bietet der EntityStore
+bereits eigene CRUD-Methoden an, die das Verwalten von Entitäten vereinfachen und viel Boilerplate Code sparen. Wenn wir vom EntityStore erben, müssen wir sowohl
+das Model des verwalteten States (PlayersState), als auch das Model der zu verwaltenden Entität (Player) definieren. Das angegebene State muss widerum das von Akita
+definierte EntityState-Interface erweitern.
+```typescript
+export interface PlayersState extends EntityState<Player> {}
+```
+Um den PlayerStore nutzen zu können, müssen wir lediglich den Constructor, in dem wir lediglich den Constructor von EntityStore mit dem initialen Zustand des Stores
+aufrufen. Gehen wir davon aus, dass der PlayerStore zum Start der Applikation keine Objekte beinhaltet, können wir die initialState Variable als leeres Objekt 
+initialiseren.
+```typescript
+const initialState: PlayersState = {};
+```      
+Mehr Implementierung ist für den Store nicht nötig. Über den @StoreConfig Dekorator können wir für den Store zusätzliche Eigenschaften wie den Namen konfigurieren.
+Das wird wichtig, wenn unsere Anwendung komplexer wird und weitere Stores beinhaltet.
 
 ### Service
 
