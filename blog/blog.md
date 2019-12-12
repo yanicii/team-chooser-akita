@@ -14,7 +14,7 @@ und neu zu rendern, allerdings erfordert das auch einen gut strukturierten Daten
 an verschiedenen Stellen einer Anwendung darzustellen. Auch hierbei muss man sich gut überlegen, wie man die Daten über die Applikation hinweg verteilt, ohne dabei
 den Überblick zu verlieren oder die gleichen Daten mehrfach abzulegen.
 
-Wenn man sich solchen Problemstellungen gegenübersteht und den State seiner Anwendung ordentlich verwalten möchte, kommt man um "State Management" Frameworks
+Wenn man sich solchen Problemstellungen gegenübersteht und den State seiner Anwendung ordentlich verwalten möchte, kommt man um State Management Frameworks
 kaum herum. In diesem Beitrag wird die Funktionsweise eines solchen Frameworks am Beispiel von Akita erklärt. Akita ist im Angular Umfeld entstanden und basiert
 auf Ideen anderer Frameworks wie NGRX. Die Code-Beispiele kommen aus einer Angular-Anwendung, allerdings ist Akita selbst nicht abhängig von der verwendeten 
 Frontend-Technologie und kann genauso gut mit Frameworks wie React oder Vue.js verwendet werden. Im Vergleich mit anderen State Management Frameworks benötigt eine 
@@ -50,7 +50,7 @@ Akita definiert 4 High-Level Prinzipien, die man als Entwickler zusätzlich beac
 
 Um die Funktionsweise von Akita zu veranschaulichen, habe ich die Beispielanwendung "Player-Manager" geschrieben. Das Programm selbst ist eine simple CRUD-Anwendung,
 mit der Entitäten vom Typ "Player" erzeugt, verändert und gelöscht werden können. Wenn ihr den kompletten Code nachvollziehen wollt, findet ihr das Projekt auf 
-[Github](https://github.com/german-reindeer/team-chooser-akita/tree/master/apps/player-manager) unter `apps/player-manager`.   
+[Github](https://github.com/german-reindeer/team-chooser-akita/tree/master/apps/player-manager).   
 
 ### Model
 
@@ -63,7 +63,7 @@ export interface Player {
 ```
 
 Das zentrale Model der Anwendung ist einfach gehalten. Die Attribute "name" und "rating" beschreiben den verwalteten Spieler, das Attribut "id" dient der 
-Identifizierung. Um die Vorzüge von Akita voll nutzen zu können, ist es wichtig, dass das Model eine eindeutige ID besitzt. Der Typ "ID" wird von Akita selbst
+Identifizierung. Um die Vorzüge von Akita voll nutzen zu können, ist es wichtig, dass das Model eine eindeutige ID besitzt. Der Interface ID wird von Akita selbst
 bereitgestellt.
 
 ### Store
@@ -92,8 +92,8 @@ initialiseren.
 ```typescript
 const initialState: PlayersState = {};
 ```      
-Mehr Implementierung ist für den Store nicht nötig. Über den @StoreConfig Dekorator können wir für den Store zusätzliche Eigenschaften wie den Namen konfigurieren.
-Das wird wichtig, wenn unsere Anwendung komplexer wird und weitere Stores beinhaltet.
+Über den `@StoreConfig` Dekorator können wir zusätzlich Eigenschaften des Stores wie den Namen konfigurieren. Das wird wichtig, wenn unsere Anwendung komplexer wird 
+und weitere Stores beinhaltet. Mehr Implementierung ist für den PlayerStore nicht nötig und wir können ihn im nächsten Schritt in einen Service einbinden.
 
 ### Service
 
@@ -107,29 +107,53 @@ export class PlayersService {
   getAll(): void {
     this.http
       .getAll()
+      .pipe(take(1))
       .subscribe(players => this.store.add(players));
   }
 
   add(players: Player[]): void {
     this.http
       .add(players)
+      .pipe(take(1))
       .subscribe(addedPlayers => this.store.add(addedPlayers));
   }
 
   remove(id: string): void {
     this.http
       .remove(id)
+      .pipe(take(1))
       .subscribe(() => this.store.remove(id));
   }
 
   updateRating(id: string, rating: number): void {
     this.http
       .update(id, rating)
+      .pipe(take(1))
       .subscribe(updatedRating => this.store.update(id, {rating: updatedRating}));
   }
 
 }
 ```
+
+Der Service stellt für unsere Anwendung eine Schnittstelle zum Store dar, über UI-Komponenten Veränderungen am State auslösen können. Die UI-Komponenten könnten den Store direkt aufrufen, 
+allerdings würde das den High-Level Prinzipien von Akita widersprechen. Darüber hinaus ist es durchaus praktisch, die Verarbeitung asynchroner Aufrufe in einem Service zu kapseln.
+In dem PlayersService greifen wir auf den PlayersHttpService zu, welcher die Kommunikation mit einer API übernimmt. Zu Anschauungszwecken ist der PlayersHttpService ein
+Dummy, der Dummy-Daten zurückgibt. Die Methoden des PlayersHttpService geben Observables zurück, über die wir an die Daten der API-Aufrufe gelangen. Wem Observables gänzlich 
+unbekannt sind, sollte sich ein Tutorial zu dem RxJs Framework anschauen (z.B. [hier](https://angular.io/guide/rx-library)). Kurz zusammengefasst: Observables geben 
+über einen Stream asynchron Daten zurück.
+
+Schauen wir uns beispielhaft die Methode `getAll()` an: Innerhalb der Methode rufen wir die Methode `getAll()` des PlayersHttpService auf, welche ein Observable des 
+Typs `Player[]` zurückgibt. Mit `subscribe()` melden wir uns bei dem Observable an, und definieren innerhalb des Methodenaufrufs, dass wir die Methode `store.add()` mit
+den `players`-Objekt aufrufen, das wir vom Observable erhalten. Einfach ausgedrückt: Wir machen einen REST-Call, der uns alle Spieler einer API zurückgeben soll. Wenn 
+wir die Antwort des Calls erhalten, speichern wir die Spieler aus der Antwort in unserem Store. 
+
+Die anderen Methoden bieten die weitere Funktionalität an, die es für einen CRUD-Service braucht. Die Methoden des Stores, die hier aufgerufen werden, mussten wir 
+allesamt nicht selbst entwickeln, da diese vom EntityStore bereitgestellt werden. Hier spart sich Akita im Vergleich zu anderen State Management Frameworks einiges an
+Boilerplate Code, was das Entwickeln sehr angenehm macht.  
+
+Der Aufruf `pipe(take(1))` in den einzelnen Methoden kommt aus dem RxJs Framework und sagt aus, dass wir nur so lange an dem Observable angemeldet sind, bis wir das erste
+Mal ein Objekt erhalten haben.       
+
 
 ### Query
 
@@ -142,5 +166,7 @@ export class PlayersQuery extends QueryEntity<PlayersState> {
   
 }
 ```
+
+### Einbindung in Komponenten
 
 
