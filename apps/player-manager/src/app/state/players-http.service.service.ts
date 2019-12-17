@@ -9,7 +9,7 @@ export class PlayersHttpService {
 
   constructor() { }
 
-  getAll(): Observable<Player[]> {
+  retrieveAll(): Observable<Player[]> {
     return of(INITIAL_PLAYERS);
   }
 

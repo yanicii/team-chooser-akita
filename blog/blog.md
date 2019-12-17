@@ -50,7 +50,7 @@ Akita definiert 4 High-Level Prinzipien, die man als Entwickler zusätzlich beac
 
 Um die Funktionsweise von Akita zu veranschaulichen, habe ich die Beispielanwendung "Player-Manager" geschrieben. Das Programm selbst ist eine simple CRUD-Anwendung,
 mit der Entitäten vom Typ "Player" erzeugt, verändert und gelöscht werden können. Wenn ihr den kompletten Code nachvollziehen wollt, findet ihr das Projekt auf 
-[Github](https://github.com/german-reindeer/team-chooser-akita/tree/master/apps/player-manager).   
+[Github](https://github.com/german-reindeer/team-chooser-akita/tree/master/).   
 
 ### Model
 
@@ -91,9 +91,11 @@ aufrufen. Gehen wir davon aus, dass der PlayerStore zum Start der Applikation ke
 initialiseren.
 ```typescript
 const initialState: PlayersState = {};
-```      
+```
 Über den `@StoreConfig` Dekorator können wir zusätzlich Eigenschaften des Stores wie den Namen konfigurieren. Das wird wichtig, wenn unsere Anwendung komplexer wird 
-und weitere Stores beinhaltet. Mehr Implementierung ist für den PlayerStore nicht nötig und wir können ihn im nächsten Schritt in einen Service einbinden.
+und weitere Stores beinhaltet. Mehr Implementierung ist für den PlayerStore nicht nötig und wir können ihn im nächsten Schritt in einen Service einbinden. Durch die 
+Erweiterung des EntityStore stellt der PlayersStore nun unter anderem Methoden wie `add`, `update`, `upsert` und `remove` zur Verfügung. Die komplette List kann man
+in der [Dokumentation](https://netbasal.gitbook.io/akita/entity-store/entity-store/api) finden.
 
 ### Service
 
@@ -104,9 +106,9 @@ export class PlayersService {
               private http: PlayersHttpService) {
   }
 
-  getAll(): void {
+  retrieveAll(): void {
     this.http
-      .getAll()
+      .retrieveAll()
       .pipe(take(1))
       .subscribe(players => this.store.add(players));
   }
@@ -142,7 +144,7 @@ Dummy, der Dummy-Daten zurückgibt. Die Methoden des PlayersHttpService geben Ob
 unbekannt sind, sollte sich ein Tutorial zu dem RxJs Framework anschauen (z.B. [hier](https://angular.io/guide/rx-library)). Kurz zusammengefasst: Observables geben 
 über einen Stream asynchron Daten zurück.
 
-Schauen wir uns beispielhaft die Methode `getAll()` an: Innerhalb der Methode rufen wir die Methode `getAll()` des PlayersHttpService auf, welche ein Observable des 
+Schauen wir uns beispielhaft die Methode `retrieveAll()` an: Innerhalb der Methode rufen wir die Methode `retrieveAll()` des PlayersHttpService auf, welche ein Observable des 
 Typs `Player[]` zurückgibt. Mit `subscribe()` melden wir uns bei dem Observable an, und definieren innerhalb des Methodenaufrufs, dass wir die Methode `store.add()` mit
 den `players`-Objekt aufrufen, das wir vom Observable erhalten. Einfach ausgedrückt: Wir machen einen REST-Call, der uns alle Spieler einer API zurückgeben soll. Wenn 
 wir die Antwort des Calls erhalten, speichern wir die Spieler aus der Antwort in unserem Store. 
@@ -166,6 +168,8 @@ export class PlayersQuery extends QueryEntity<PlayersState> {
   
 }
 ```
+
+Als letzen Bestandteil der Akita Implementierung brauchen wir noch einen Service, der die Daten des Stores bereitstellt. Auch hier brauchen wir kaum etwas selbst
 
 ### Einbindung in Komponenten
 

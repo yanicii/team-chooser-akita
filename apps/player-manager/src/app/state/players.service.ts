@@ -13,9 +13,9 @@ export class PlayersService {
               private http: PlayersHttpService) {
   }
 
-  getAll(): void {
+  retrieveAll(): void {
     this.http
-      .getAll()
+      .retrieveAll()
       .pipe(take(1))
       .subscribe(players => this.store.add(players));
   }

@@ -9,7 +9,7 @@ import {PlayersService} from '../state/players.service';
 export class AppComponent {
 
   constructor(playersService: PlayersService) {
-    playersService.getAll();
+    playersService.retrieveAll();
   }
 
   navLinks = [

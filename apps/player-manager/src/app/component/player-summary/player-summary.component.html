@@ -1,0 +1,6 @@
+<mat-toolbar fxFlex.gt-md="50" fxFlex.lt-md="100" fxLayout="row" fxLayoutAlign="center center">
+  <mat-chip-list>
+    <mat-chip>Player total: {{playerTotal | async}}</mat-chip>
+    <mat-chip>Average stars: {{(averageRating | async) | number: '1.2-2'}}</mat-chip>
+  </mat-chip-list>
+</mat-toolbar>

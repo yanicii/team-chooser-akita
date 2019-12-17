@@ -21,6 +21,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {PlayerRatingComponent} from './component/player-rating/player-rating.component';
 import {PlayerPositionComponent} from './component/player-position/player-position.component';
+import {PlayerSummaryComponent} from './component/player-summary/player-summary.component';
 
 const routes: Routes = [
   {
@@ -39,7 +40,8 @@ const routes: Routes = [
     AppComponent,
     ManagePlayersComponent,
     PlayerRatingComponent,
-    PlayerPositionComponent
+    PlayerPositionComponent,
+    PlayerSummaryComponent
   ],
   imports: [
     BrowserModule,
