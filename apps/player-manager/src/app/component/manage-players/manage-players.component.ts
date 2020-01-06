@@ -3,7 +3,7 @@ import {Observable} from 'rxjs';
 import {createPlayer, Player} from '../../model/player.model';
 import {PlayersQuery} from '../../state/players.query';
 import {PlayersService} from '../../state/players.service';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {FormBuilder, FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'manage-players',

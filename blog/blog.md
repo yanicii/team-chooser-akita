@@ -169,7 +169,11 @@ export class PlayersQuery extends QueryEntity<PlayersState> {
 }
 ```
 
-Als letzen Bestandteil der Akita Implementierung brauchen wir noch einen Service, der die Daten des Stores bereitstellt. Auch hier brauchen wir kaum etwas selbst
+Als letzen Bestandteil der Akita Implementierung brauchen wir noch einen Service, der die Daten des Stores bereitstellt. Auch hier haben wir kaum etwas zu implementieren,
+da die Klasse QueryEntity, von der wir erben, bereits viele nützliche Methoden mitbringt. Eine bereits implementierte Methode ist `getAll`, welche in diesem Fall alle sich
+im Store hinterlegten Spieler als Array zurückgibt. Zusätzlich dieser Methode gibt es ein `selectAll`, welches ein Obervable des Spieler Arrays zurückgibt. Mit Observables
+zu arbeiten hat den Vorteil, dass man mitbekommt, wenn sich Daten der angefragten Quelle verändern. Benutzen wir also die `select` Methoden der PlayersQuery-Klasse, welche
+alle Observables zurückgeben, können wir stets die aktuellen Daten des Stores anzeigen, ohne erneut eine Methode der PlayersQuery-Klasse aufrufen zu müssen.  
 
 ### Einbindung in Komponenten
 
