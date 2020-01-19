@@ -2,14 +2,12 @@
 
 ## Motivation
 
-Webapplikationen haben häufig die Aufgabe, Informationen aus unterschiedlichen Quellen zur Verfügung zu stellen. Zum Funktionsumfang solcher Anwendungen gehört 
-neben der Anzeige auch oft die Aktualisierung, Erweiterung und Löschung bestimmter Informationen. Um diese Funktionen zu ermöglichen, müssen dafür irgendwie Daten im 
-Client vorgehalten werden. Die Gesamtheit der verwalteten Informationen beinflusst die Anzeige und das Verhalten der Applikation und kann als Zustand oder State
-bezeichnet werden. Abhängig von der Anwendung muss auch der Zustand der UI verwaltet werden, sodass zusätzlich Informationen wie "Ist die Sidebar aufgeklappt?" im 
-Client "gespeichert" werden.
+Webapplikationen haben häufig die Aufgabe, Informationen unterschiedlicher Quellen darzustellen. Zum Funktionsumfang solcher Anwendungen gehört 
+neben der Darstellung auch oft die Aktualisierung, Erweiterung und Löschung bestimmter Daten. Um solche Funktionen zu ermöglichen, müssen diese Daten im 
+Client vorgehalten werden. Die Gesamtheit der vom Client vorgehaltenen Informationen kann als State beziehungsweise Zustand der Applikation bezeichnet werden.
 
-Eine Herausforderung bei der Darstellung von Informationen in Webapplikationen ist, dass die Requests häufig zu verschiedenen Quellen geschickt werden und die 
-Responses somit zu beliebigen Zeitpunkten zurückkommen. Es ist wichtig die einzelnen Komponenten des Clients zur richtigen Zeit mit neuen Daten zu aktualisieren
+Eine Herausforderung bei der Darstellung von Informationen in Webapplikationen ist, dass die Requests häufig an verschiedene Quellen geschickt werden und die 
+Responses zu beliebigen Zeitpunkten zurückkommen. Es ist wichtig die einzelnen Komponenten des Clients zur richtigen Zeit mit neuen Daten zu aktualisieren
 und neu zu rendern, allerdings erfordert das auch einen gut strukturierten Datenfluss. Darüber hinaus hat man häufig die Aufgabe, ein und die selbe Information an
 an verschiedenen Stellen einer Anwendung darzustellen. Auch hierbei muss man sich gut überlegen, wie man die Daten über die Applikation hinweg verteilt, ohne dabei
 den Überblick zu verlieren oder die gleichen Daten mehrfach abzulegen.
@@ -36,21 +34,24 @@ darf den Zustand des Stores verändern. Außerdem ist der Service dafür zustän
 an den Store weiterzugeben. Den Komponenten stellt der Service Methoden bereit, mit denen der User Änderungen am Store auslösen kann. 
 
 Die oben beschriebenen Komponenten und Abläufe stellen die Basis des Akita-Patterns da, an die man sich bei einer Implementierung halten sollte. Wichtig ist vor 
-allem die Einhaltung des unidirektionalen Datenflusses, der eine gute Nachvollziehbarkeit der Vorgänge innerhalb der Anwendung ermöglicht. Das Entwickler Team von
+allem die Einhaltung des unidirektionalen Datenflusses, der eine gute Nach­voll­zieh­bar­keit der Vorgänge innerhalb der Anwendung ermöglicht. Das Entwickler Team von
 Akita definiert 4 High-Level Prinzipien, die man als Entwickler zusätzlich beachten sollte. Teilweise ergeben sich die Prinzipien bereits aus dem Akita-Pattern selbst. 
 
 ## High-Level Prinzipien
 
 1. Ein Store ist ein einzelnes Objekt, welches den aktuellen Zustand des Stores beinhaltet und als "Single source of truth" dient
-2. Der Zustand des Stores kann nur durch die Methode `setState()` verändert werden
+2. Der Zustand des Stores kann nur mit einer einzigen Methode (`setState()`) verändert werden
 3. Komponenten greifen nicht direkt, sondern über vordefinierte Queries auf den Store zu 
 4. Die Aktualisierung des Stores und weitere asynchrone Logik soll in einem Service gekapselt werden   
 
 ## Bestandteile von Akita
 
-Um die Funktionsweise von Akita zu veranschaulichen, habe ich die Beispielanwendung "Player-Manager" geschrieben. Das Programm selbst ist eine simple CRUD-Anwendung,
-mit der Entitäten vom Typ "Player" erzeugt, verändert und gelöscht werden können. Wenn ihr den kompletten Code nachvollziehen wollt, findet ihr das Projekt auf 
-[Github](https://github.com/german-reindeer/team-chooser-akita/tree/master/).   
+![Team Manager](team_manager.png)
+
+Um die Funktionsweise von Akita zu veranschaulichen, habe ich die Beispielanwendung "Player-Manager" geschrieben. Der "Player-Manager" ist eine simple CRUD-Anwendung 
+(Create Read Update Delete), mit der eine Liste von Spielern verwaltet werden können. In der Anwendung kann man Spieler hinzufügen, löschen und das Rating eines Spielers anpassen. 
+Wenn ihr den kompletten Code nachvollziehen wollt, findet ihr das Projekt auf [Github](https://github.com/german-reindeer/team-chooser-akita/tree/master/). Ansonsten kann man in dem
+Screenshot weiter oben erkennen, wie die Anwendung aufgebaut ist.  
 
 ### Model
 
@@ -81,7 +82,7 @@ export class PlayersStore extends EntityStore<PlayersState, Player> {
 Um Informationen zu verschiedenen Spielern zu verwalten, implementieren wir einen Store. Hierzu erweitern wird die von Akita bereitgestellte EntityStore-Klasse. 
 Vereinfacht kann man sich einen solchen EntityStore als Datenbanktabelle vorstellen. Im Vergleich zur der normalen Store-Klasse von Akita bietet der EntityStore
 bereits eigene CRUD-Methoden an, die das Verwalten von Entitäten vereinfachen und viel Boilerplate Code sparen. Wenn wir vom EntityStore erben, müssen wir sowohl
-das Model des verwalteten States (PlayersState), als auch das Model der zu verwaltenden Entität (Player) definieren. Das angegebene State muss widerum das von Akita
+das Model des verwalteten States (PlayersState), als auch das Model der zu verwaltenden Entität (Player) definieren. Das angegebene State muss wiederum das von Akita
 definierte EntityState-Interface erweitern.
 ```typescript
 export interface PlayersState extends EntityState<Player> {}
@@ -92,7 +93,7 @@ initialiseren.
 ```typescript
 const initialState: PlayersState = {};
 ```
-Über den `@StoreConfig` Dekorator können wir zusätzlich Eigenschaften des Stores wie den Namen konfigurieren. Das wird wichtig, wenn unsere Anwendung komplexer wird 
+Über den `@StoreConfig` Decorator können wir zusätzlich Eigenschaften des Stores wie den Namen konfigurieren. Das wird wichtig, wenn unsere Anwendung komplexer wird 
 und weitere Stores beinhaltet. Mehr Implementierung ist für den PlayerStore nicht nötig und wir können ihn im nächsten Schritt in einen Service einbinden. Durch die 
 Erweiterung des EntityStore stellt der PlayersStore nun unter anderem Methoden wie `add`, `update`, `upsert` und `remove` zur Verfügung. Die komplette List kann man
 in der [Dokumentation](https://netbasal.gitbook.io/akita/entity-store/entity-store/api) finden.
@@ -171,10 +172,84 @@ export class PlayersQuery extends QueryEntity<PlayersState> {
 
 Als letzen Bestandteil der Akita Implementierung brauchen wir noch einen Service, der die Daten des Stores bereitstellt. Auch hier haben wir kaum etwas zu implementieren,
 da die Klasse QueryEntity, von der wir erben, bereits viele nützliche Methoden mitbringt. Eine bereits implementierte Methode ist `getAll`, welche in diesem Fall alle sich
-im Store hinterlegten Spieler als Array zurückgibt. Zusätzlich dieser Methode gibt es ein `selectAll`, welches ein Obervable des Spieler Arrays zurückgibt. Mit Observables
+im Store hinterlegten Spieler als Array zurückgibt. Zusätzlich dieser Methode gibt es ein `selectAll`, welches ein Observable des Spieler Arrays zurückgibt. Mit Observables
 zu arbeiten hat den Vorteil, dass man mitbekommt, wenn sich Daten der angefragten Quelle verändern. Benutzen wir also die `select` Methoden der PlayersQuery-Klasse, welche
-alle Observables zurückgeben, können wir stets die aktuellen Daten des Stores anzeigen, ohne erneut eine Methode der PlayersQuery-Klasse aufrufen zu müssen.  
+Observables zurückgeben, können wir stets die aktuellen Daten des Stores anzeigen, ohne erneut eine Methode der PlayersQuery-Klasse aufrufen zu müssen.  
 
 ### Einbindung in Komponenten
+
+```typescript
+@Component({
+  selector: 'manage-players',
+  templateUrl: './manage-players.component.html',
+  styleUrls: ['./manage-players.component.scss']
+})
+export class ManagePlayersComponent {
+
+  playerForm: FormGroup;
+
+  allPlayers$: Observable<Player[]>;
+
+  constructor(private playersQuery: PlayersQuery,
+              private playersService: PlayersService,
+              private formBuilder: FormBuilder) {
+    this.initFormGroup();
+    this.allPlayers$ = this.playersQuery.selectAll();
+  }
+
+  addPlayer(): void {
+    const name = this.playerForm.value.name;
+    if (name) {
+      this.playersService.add([createPlayer(name, 0)]);
+      this.playerForm.reset();
+    }
+  }
+
+  updatePlayerRating(playerId: string, rating: number): void {
+    this.playersService.updateRating(playerId, rating);
+  }
+
+  removePlayer(playerId: string): void {
+    this.playersService.remove(playerId);
+  }
+
+  ...
+
+}
+```
+
+Nachdem nun alle Akita-spezischen Bestandteile implementiert sind, können wir das State Management in den UI-Komponenten einbinden. Hierfür injezieren wir zuerst die Services PlayersQuery und PlayersService über den 
+Constructor. Nun können wir die Methode `selectAll` der PlayersQuery-Klasse aufrufen und erhalten ein Observable aller Player-Objekte, die sich zu diesem Zeitpunkt im Store befinden. Das Observable wird in der 
+Variable `allPlayers$` gespeichert, auf die das HTML-Template der Komponente zugreift. Hat die Komponente das Player-Observable erhalten, können die Player-Informationen in einer Liste dargestellt werden. 
+Zusätzlich zum Constructor bietet die Komponente die Methoden `addPlayer`, `updatePlayerRating` und `removePlayer`, welche vom Anwender per Klick getriggert werden können. Wird bespielsweise die Methode `removePlayer`
+aufgerufen, ruft die Komponente die `remove` Methode des PlayersService auf und das referenzierte Players-Objekt wird aus dem PlayersStore entfernt. Das führt widerum dazu, dass sich das `allPlayers$` Observable
+aktualisiert und eine neue Liste an Player-Objekten erhält, in der der zuvor gelöschte Player nicht mehr enthalten ist. Anschließend wird das Template der Komponente mit der neuen Player-Liste aktualisiert.
+Mit den Methoden `addPlayer` und `updatePlayerRating` können neue Player hinzugefügt oder bestehende Player-Informationen werden, was die CRUD-Anwendung dann komplettiert. Wenn ihr den ganzen Code Quellcode inklusive aller Templates
+nachvollziehen wollt, verweise ich erneut auf [Github-Projekt](https://github.com/german-reindeer/team-chooser-akita/tree/master/).
+
+
+## Devtools
+
+![Redux Devtools](redux_dev_tools.png)
+
+Wer viel im Frontend entwickelt weiß, dass das Debugging manchmal schwer fallen kann. In Bezug auf Akita gibt es allerdings das Plugin Redux DevTools, dass die Fehlersuche extrem vereinfacht. Redux DevTools zeigt
+euch zu jeder Zeit den aktuellen Inhalt des Stores an und speichert zudem eine komplette Historie aller Änderungen der Daten im Store. Somit könnt ihr exakt nachvollziehen in welcher Reihenfolge sich die Daten
+in eurem Store aus welche Weise verändert haben, was das entwickeln mit Akita sehr transparent macht. Das Plugin gibt es sowohl für [Chrome](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd?hl=de) 
+als auch für [Firefox](https://addons.mozilla.org/de/firefox/addon/reduxdevtools/).       
+
+## Ausblick 
+
+Das Akita Framework bietet noch viele weitere Aspekte, die ich in diesem Artikel nicht angesprochen habe. In einer realen Anwendung wird man mit hoher Wahrscheinlichkeit mehrere Stores implementieren, 
+welche dann widerum Beziehungen zueienander haben. Dann sollte man über Themen wie die Normalisierung von Daten nachdenken, was mit Akita ebenfalls realisierbar ist. Mit zunehmender Größe einer Applikation steigt zudem
+auch häufig die Komplexität der Abfragen in den Query-Klassen, über die man ein eigenes Tutorial schreiben könnte. Wer sich über solche und weitere Themen im Bezug auf Akita informieren möchte, dem lege ich die offizielle
+Dokumentation von Akita ans Herz, die sowohl von der Struktur als auch vom Umfang sehr gelungen ist. Andere Einstiegspunkte und Tutorials sind zudem in den Quellen aufgeführt.       
+
+## Quellen
+
+* https://netbasal.gitbook.io/akita/
+* https://blog.ng-book.com/managing-state-in-angular-using-akita/
+* https://netbasal.com/introducing-akita-a-new-state-management-pattern-for-angular-applications-f2f0fab5a8
+* https://netbasal.com/working-with-normalized-data-in-akita-e626d4c67ca4
+* https://engineering.datorama.com/our-journey-in-angular-from-ngrx-to-akita-9b70b3d7ea70
 
 
