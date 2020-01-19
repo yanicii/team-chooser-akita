@@ -1,8 +1,10 @@
 # Player-Manager
 
+![Team Manager](blog/team_manager.png)
+
 ## Setup npm
 
-Als Vorbedingung, um die Anwendung Player-Manager starten zu können, müssen Node und npm installiert sein.
+Um die Anwendung Player-Manager starten zu können, müssen Node und npm lokal installiert sein.
 Ist das nicht der Fall, sollte man sich folgendes Tutorial anschauen: https://docs.npmjs.com/downloading-and-installing-node-js-and-npm. 
 
 ## Setup Projekt
