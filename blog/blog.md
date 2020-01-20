@@ -14,7 +14,7 @@ den Überblick zu verlieren oder die gleichen Daten mehrfach abzulegen.
 
 Wenn man sich solchen Problemstellungen gegenübersteht und den State seiner Anwendung ordentlich verwalten möchte, kommt man um State Management Frameworks
 kaum herum. In diesem Beitrag wird die Funktionsweise eines solchen Frameworks am Beispiel von Akita erklärt. Akita ist im Angular Umfeld entstanden und basiert
-auf Ideen anderer Frameworks wie NGRX. Die Code-Beispiele kommen aus einer Angular-Anwendung, allerdings ist Akita selbst nicht abhängig von der verwendeten 
+auf Ideen anderer Frameworks wie [NgRx](https://ngrx.io/). Die Code-Beispiele kommen aus einer Angular-Anwendung, allerdings ist Akita selbst nicht abhängig von der verwendeten 
 Frontend-Technologie und kann genauso gut mit Frameworks wie React und Vue.js verwendet werden. Im Vergleich mit anderen State Management Frameworks benötigt eine 
 Implementierung mit Akita deutlich weniger Boilerplate Code und bietet somit einen einfachen Einstieg.  
 
@@ -26,7 +26,7 @@ Im Mittelpunkt des State Management Frameworks von Akita stehen die sogenannten 
 als eine Art "Frontend-Repository" angesehen werden. Im Normalfall ist ein Store für die Verwaltung einer einzelnen Entität zuständig, sodass eine Anwendung meist 
 aus mehreren Stores besteht. Um den Zugriff auf die Entitäten zu ermöglichen, werden für jeden Store Queries definiert. Diese Queries können in die einzelnen 
 Komponenten eingebunden werden, wo die Daten letztendlich dem User sichtbar gemacht werden. Der Datenfluss über die Queries zu den Komponenten wird über asynchrone 
-Streams realisiert, die man aus dem RXJS Framework kennt. Das führt dazu, dass Aktualisierungen des Stores direkt an die Komponenten weitergegeben werden und
+Streams realisiert, die man aus dem [RxJS Framework](https://rxjs-dev.firebaseapp.com/) kennt. Das führt dazu, dass Aktualisierungen des Stores direkt an die Komponenten weitergegeben werden und
 die neuen Informationen unverzüglich neu gerendert werden.
 
 Damit Informationen aus dem Store gelesen werden können, muss der Store zuerst mit Daten befüllt werden, wofür ein Service zuständig ist. Lediglich dieser Service
@@ -89,7 +89,7 @@ export interface PlayersState extends EntityState<Player> {}
 ```
 Um den PlayerStore nutzen zu können, müssen wir lediglich den Constructor von EntityStore mit dem initialen Zustand des Stores
 aufrufen. Gehen wir davon aus, dass der PlayerStore zum Start der Applikation keine Objekte beinhaltet, können wir die `initialState` Variable als leeres Objekt 
-initialiseren.
+initialisieren.
 ```typescript
 const initialState: PlayersState = {};
 ```
@@ -142,7 +142,7 @@ Der Service stellt für unsere Anwendung eine Schnittstelle zum Store dar, über
 allerdings würde das den High-Level Prinzipien von Akita widersprechen. Darüber hinaus ist es durchaus praktisch, die Verarbeitung asynchroner Aufrufe in einem Service zu kapseln.
 In dem PlayersService greifen wir auf den PlayersHttpService zu, welcher die Kommunikation mit einer API übernimmt. Zu Anschauungszwecken ist der PlayersHttpService ein
 Dummy, der Dummy-Daten zurückgibt. Die Methoden des PlayersHttpService geben Observables zurück, über die wir an die Daten der API-Aufrufe gelangen. Wem Observables gänzlich 
-unbekannt sind, sollte sich ein Tutorial zu dem RxJs Framework anschauen (z.B. [hier](https://angular.io/guide/rx-library)). Kurz zusammengefasst: Observables geben 
+unbekannt sind, sollte sich ein Tutorial zu dem RxJS Framework anschauen (z.B. [hier](https://angular.io/guide/rx-library)). Kurz zusammengefasst: Observables geben 
 über einen Stream asynchron Daten zurück.
 
 Schauen wir uns beispielhaft die Methode `retrieveAll()` an: Innerhalb der Methode rufen wir die Methode `retrieveAll()` des PlayersHttpService auf, welche ein Observable des 
@@ -154,7 +154,7 @@ Die anderen Methoden bieten weitere Funktionen an, die es für einen CRUD-Servic
 allesamt nicht selbst entwickeln, da diese vom EntityStore bereitgestellt werden. Hier spart sich Akita im Vergleich zu anderen State Management Frameworks einiges an
 Boilerplate Code, was das Entwickeln sehr angenehm macht.  
 
-Der Aufruf `pipe(take(1))` in den einzelnen Methoden kommt aus dem RxJs Framework und sagt aus, dass wir nur so lange an dem Observable angemeldet bleiben, bis wir das erste
+Der Aufruf `pipe(take(1))` in den einzelnen Methoden kommt aus dem RxJS Framework und sagt aus, dass wir nur so lange an dem Observable angemeldet bleiben, bis wir das erste
 Mal ein Objekt erhalten haben.       
 
 
@@ -170,7 +170,7 @@ export class PlayersQuery extends QueryEntity<PlayersState> {
 }
 ```
 
-Als letzen Bestandteil der Akita Implementierung brauchen wir noch einen Service, der die Daten des Stores bereitstellt. Auch hier haben wir kaum etwas zu implementieren,
+Als letzten Bestandteil der Akita Implementierung brauchen wir noch einen Service, der die Daten des Stores bereitstellt. Auch hier haben wir kaum etwas zu implementieren,
 da die Klasse QueryEntity, von der wir erben, bereits viele nützliche Methoden mitbringt. Eine bereits implementierte Methode ist `getAll`, welche in diesem Fall alle sich
 im Store hinterlegten Spieler als Array zurückgibt. Zusätzlich zu dieser Methode gibt es ein `selectAll`, welches ein Observable des Spieler Arrays zurückgibt. Mit Observables
 zu arbeiten hat den Vorteil, dass man mitbekommt, wenn sich Daten der angefragten Quelle verändern. Benutzen wir also die `select` Methoden der PlayersQuery-Klasse, welche
@@ -218,11 +218,11 @@ export class ManagePlayersComponent {
 }
 ```
 
-Nachdem nun alle Akita-spezischen Bestandteile implementiert sind, können wir das State Management in die UI-Komponenten einbinden. Hierfür injezieren wir zuerst die Services PlayersQuery und PlayersService über den 
+Nachdem nun alle Akita-spezifischen Bestandteile implementiert sind, können wir das State Management in die UI-Komponenten einbinden. Hierfür injizieren wir zuerst die Services PlayersQuery und PlayersService über den 
 Constructor. Nun können wir die Methode `selectAll` der PlayersQuery-Klasse aufrufen und erhalten ein Observable aller Player-Objekte, die sich zu diesem Zeitpunkt im Store befinden. Das Observable wird in der 
 Variable `allPlayers$` gespeichert, auf die das HTML-Template der Komponente zugreift. Hat die Komponente das Player-Observable intialisiert, können die Player-Informationen in einer Liste dargestellt werden. 
-Zusätzlich zum Constructor bietet die Komponente die Methoden `addPlayer`, `updatePlayerRating` und `removePlayer`, welche vom Anwender per Klick getriggert werden können. Wird bespielsweise die Methode `removePlayer`
-aufgerufen, ruft die UI-Komponenten die `remove` Methode des PlayersService auf und das referenzierte Players-Objekt wird aus dem PlayersStore entfernt. Das führt widerum dazu, dass sich das `allPlayers$` Observable
+Zusätzlich zum Constructor bietet die Komponente die Methoden `addPlayer`, `updatePlayerRating` und `removePlayer`, welche vom Anwender per Klick getriggert werden können. Wird beispielsweise die Methode `removePlayer`
+aufgerufen, ruft die UI-Komponenten die `remove` Methode des PlayersService auf und das referenzierte Players-Objekt wird aus dem PlayersStore entfernt. Das führt wiederum dazu, dass sich das `allPlayers$` Observable
 aktualisiert und eine neue Liste an Player-Objekten erhält, in welcher der zuvor gelöschte Player nicht mehr enthalten ist. Anschließend wird das Template der Komponente mit der neuen Player-Liste erneut gerendert.
 Mit den Methoden `addPlayer` und `updatePlayerRating` können neue Player hinzugefügt oder bestehende Player-Informationen werden, was die CRUD-Anwendung dann komplettiert. Wenn ihr den ganzen Code Quellcode inklusive aller Templates
 nachvollziehen wollt, verweise ich erneut auf [Github-Projekt](https://github.com/german-reindeer/team-chooser-akita/tree/master/).
@@ -233,14 +233,14 @@ nachvollziehen wollt, verweise ich erneut auf [Github-Projekt](https://github.co
 ![Redux Devtools](redux_dev_tools.png)
 
 Wer viel im Frontend entwickelt weiß, dass das Debugging manchmal schwer fallen kann. Für Akita gibt es allerdings das Browser-Plugin Redux DevTools, dass die Fehlersuche extrem vereinfacht. Redux DevTools zeigt
-euch zu jeder Zeit den aktuellen Inhalt des Stores an und speichert zudem eine komplette Historie aller Änderungen der Daten im Store. Somit könnt ihr exakt nachvollziehen zu welchem Zeitpunk sich die Daten
+euch zu jeder Zeit den aktuellen Inhalt des Stores an und speichert zudem eine komplette Historie aller Änderungen der Daten im Store. Somit könnt ihr exakt nachvollziehen zu welchem Zeitpunkt sich die Daten
 in eurem Store auf welche Weise verändert haben, was das Entwickeln mit Akita sehr transparent macht. Das Plugin gibt es sowohl für [Chrome](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd?hl=de) 
 als auch für [Firefox](https://addons.mozilla.org/de/firefox/addon/reduxdevtools/).       
 
 ## Ausblick 
 
 Das Akita Framework bietet noch viele weitere Aspekte, die ich in diesem Artikel nicht angesprochen habe. In einer realen Anwendung wird man mit hoher Wahrscheinlichkeit mehrere Stores implementieren, 
-welche dann widerum Beziehungen zueienander haben. Dann sollte man über Themen wie die Normalisierung von Daten nachdenken, was mit Akita ebenfalls realisierbar ist. Mit zunehmender Größe einer Applikation steigt zudem
+welche dann wiederum Beziehungen zueinander haben. Dann sollte man über Themen wie die Normalisierung von Daten nachdenken, was mit Akita ebenfalls realisierbar ist. Mit zunehmender Größe einer Applikation steigt zudem
 auch häufig die Komplexität der Abfragen in den Query-Klassen, über die man ein eigenes Tutorial schreiben könnte. Wer sich über solche und weitere Themen im Bezug auf Akita informieren möchte, dem lege ich die offizielle
 Dokumentation von Akita ans Herz, die sowohl von der Struktur als auch vom Umfang her sehr gelungen ist. Andere Einstiegspunkte und Tutorials sind zudem in den Quellen aufgeführt.       
 
